@@ -12,13 +12,19 @@ public class MapGenerator : MonoBehaviour
     public static MapGenerator Instance { get; private set; }
 
     [SerializeField]
-    private List<PoolObject> _poolPrefabs;
+    private List<GameObject> _poolPrefabs;
+
+    [SerializeField]
+    private List<GameObject> _enemiesPrefabs;
+
     private List<GameObject> _pool;
-    private int _poolCount = 5;
-    private int _zFirstFragmentOffset = 8;
-    private int _zFragments = 5;
-    private int _zSpawnGap = 14;
-    private int _nextZSpawnPosition { get => _zFirstFragmentOffset + _zFragments * _zSpawnGap; }
+
+    private float _poolCount = 10;
+    private float _zFirstFragmentOffset = 8;
+    private float _zFragments = 2;
+    private float _zSpawnGap = 14;
+    private float _nextZSpawnPosition { get => _zFirstFragmentOffset + _zFragments * _zSpawnGap; }
+    private Vector3 _nextSpawnPositionForFloor { get => new Vector3(_xFixedPosition, _yFixedPosition, _nextZSpawnPosition); }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,26 +39,38 @@ public class MapGenerator : MonoBehaviour
     void Start()
     {
         InstaniatePool();
+        GenerateFragment();
+        GenerateFragment();
+        GenerateFragment();
     }
     void InstaniatePool()
     {
         _pool = new List<GameObject>();
-        GameObject grassObj;
+        GameObject obj;
         for(int j = 0; j < _poolPrefabs.Count; j++)
         {
             for (int i = 0; i < _poolCount; i++)
             {
-                grassObj = Instantiate(_poolPrefabs[j].gameObject);
-                grassObj.SetActive(false);
-                _pool.Add(grassObj);
+                obj = Instantiate(_poolPrefabs[j].gameObject);
+                obj.SetActive(false);
+                _pool.Add(obj);
             }
         }
     }
 
-    public void GenerateNewFragment()
+    public void GenerateFragment()
     {
-        GameObject obj = GetPooledObject();
-        PlaceNewObjectToFront(obj);
+        GameObject floor = GetPooledObjectFloor();
+        PlaceNewObjectToFront(floor);
+        SpawnEnemyOnFloor(floor);
+    }
+
+    private void SpawnEnemyOnFloor(GameObject floor)
+    {
+        var randomEnemy = _enemiesPrefabs[Random.Range(0, _enemiesPrefabs.Count)];
+        var spawnOn = floor.GetComponent<SpawnArea>().randomSpawnPointGlobalPosition;
+        Debug.Log(spawnOn);
+        Instantiate(randomEnemy, spawnOn, Quaternion.identity);
     }
 
     public void HideFragment(GameObject gameObject)
@@ -60,10 +78,10 @@ public class MapGenerator : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    GameObject GetPooledObject()
+    GameObject GetPooledObjectFloor()
     {
         int objTypeToChoose = Random.Range(0, _poolPrefabs.Count);
-        string poolTagToChoose = _poolPrefabs[objTypeToChoose].poolTag;
+        string poolTagToChoose = _poolPrefabs[objTypeToChoose].GetComponent<PoolObject>().poolTag;
         for(int i = 0; i < _pool.Count; i++)
         {
             if (!_pool[i].activeInHierarchy && _pool[i].GetComponent<PoolObject>().poolTag == poolTagToChoose)
@@ -79,7 +97,7 @@ public class MapGenerator : MonoBehaviour
     {
         if(obj != null)
         {
-            obj.transform.position = new Vector3(_xFixedPosition,_yFixedPosition,_nextZSpawnPosition);
+            obj.transform.position = _nextSpawnPositionForFloor;
             obj.SetActive(true);
             _zFragments++;
         }

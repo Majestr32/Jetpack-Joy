@@ -11,7 +11,7 @@ public class PoolObject : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            MapGenerator.Instance.GenerateNewFragment();
+            MapGenerator.Instance.GenerateFragment();
         }
     }
 

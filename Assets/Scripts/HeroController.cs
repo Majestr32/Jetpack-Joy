@@ -7,14 +7,10 @@ public class HeroController : MonoBehaviour
     [SerializeField]
     private float _speed = 1;
     private float _horizontal = 0;
-    void Start()
-    {
-
-    }
 
     void Update()
     {
         _horizontal = Input.GetAxis("Horizontal");
-        transform.position += new Vector3(_horizontal,0,1) * Time.deltaTime * _speed;
+        transform.Translate(new Vector3(_horizontal,0,1) * Time.deltaTime * _speed);
     }
 }
