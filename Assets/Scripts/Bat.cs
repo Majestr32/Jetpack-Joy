@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Troll : MonoBehaviour, IEnemy
+public class Bat : MonoBehaviour, IEnemy
 {
-    [SerializeField, Range(1,100)]
-    private float _visionRange;
+    [SerializeField, Range(0,100)]
+    private float _damageRange;
     [SerializeField]
     private float _lifeTime = 35;
+    [SerializeField]
+    private float _speed = 2;
     private GameObject _hero;
     public void TrackHero()
     {
@@ -17,7 +19,7 @@ public class Troll : MonoBehaviour, IEnemy
     }
     public void SeekHero()
     {
-        var foundObjects = Physics.OverlapSphere(transform.position, _visionRange);
+        var foundObjects = Physics.OverlapSphere(transform.position, _damageRange);
         foreach(var obj in foundObjects)
         {
             if (obj.CompareTag("Player"))
@@ -29,27 +31,20 @@ public class Troll : MonoBehaviour, IEnemy
 
     private void Update()
     {
+        transform.Translate(Vector3.forward * Time.deltaTime * _speed);
         if(_hero == null)
         {
             SeekHero();
         }
         else
         {
-            TrackHero();
-            MaybeAttack();
-        }
-    }
-    private void MaybeAttack()
-    {
-        if(_hero.transform.position.z > transform.position.z)
-        {
-            DealDamage();
+            Debug.Log("Damaged hero");
             Die();
         }
     }
     public void DealDamage()
     {
-        Debug.Log("Damaged hero");
+        
     }
 
     public void Die()
@@ -64,7 +59,6 @@ public class Troll : MonoBehaviour, IEnemy
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(transform.position, _visionRange);
+        Gizmos.DrawWireSphere(transform.position, _damageRange);
     }
-
 }

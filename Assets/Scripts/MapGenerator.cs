@@ -70,7 +70,7 @@ public class MapGenerator : MonoBehaviour
         var randomEnemy = _enemiesPrefabs[Random.Range(0, _enemiesPrefabs.Count)];
         var spawnOn = floor.GetComponent<SpawnArea>().randomSpawnPointGlobalPosition;
         Debug.Log(spawnOn);
-        Instantiate(randomEnemy, spawnOn, Quaternion.identity);
+        Instantiate(randomEnemy, spawnOn, new Quaternion(0,90,0,1f));
     }
 
     public void HideFragment(GameObject gameObject)
