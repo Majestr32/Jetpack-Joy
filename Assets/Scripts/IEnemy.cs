@@ -5,5 +5,6 @@ using UnityEngine;
 public interface IEnemy
 {
     void DealDamage();
+    void ReceiveHitFromPlayer();
     void Die();
 }

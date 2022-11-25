@@ -38,13 +38,13 @@ public class Bat : MonoBehaviour, IEnemy
         }
         else
         {
-            Debug.Log("Damaged hero");
+            DealDamage();
             Die();
         }
     }
     public void DealDamage()
     {
-        
+        _hero.GetComponent<HeroController>().ReceiveDamage();
     }
 
     public void Die()
@@ -60,5 +60,10 @@ public class Bat : MonoBehaviour, IEnemy
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(transform.position, _damageRange);
+    }
+
+    public void ReceiveHitFromPlayer()
+    {
+        // Can`t be attacked
     }
 }

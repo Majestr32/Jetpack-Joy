@@ -8,7 +8,18 @@ public class Troll : MonoBehaviour, IEnemy
     private float _visionRange;
     [SerializeField]
     private float _lifeTime = 35;
+    [SerializeField]
+    private float _knockdownScaleWidth = 50f;
+    [SerializeField]
+    private float _knockdownScaleHeight = 10f;
+    private bool _canHit = true;
+    private Rigidbody _rb;
     private GameObject _hero;
+
+    private void Awake()
+    {
+        _rb = GetComponent<Rigidbody>();
+    }
     public void TrackHero()
     {
         Vector3 targetDirection = (_hero.transform.position - transform.position).normalized;
@@ -49,12 +60,16 @@ public class Troll : MonoBehaviour, IEnemy
     }
     public void DealDamage()
     {
-        Debug.Log("Damaged hero");
+        if (_canHit)
+        {
+            _rb.AddForce(transform.TransformDirection(Vector3.forward) * _knockdownScaleWidth + Vector3.up * 2f, ForceMode.Impulse);
+            _hero.GetComponent<HeroController>().ReceiveDamage();
+        }
     }
 
     public void Die()
     {
-        Destroy(gameObject);
+        Destroy(gameObject, 0.2f);
     }
 
     private void Start()
@@ -67,4 +82,10 @@ public class Troll : MonoBehaviour, IEnemy
         Gizmos.DrawWireSphere(transform.position, _visionRange);
     }
 
+    public void ReceiveHitFromPlayer()
+    {
+        _rb.AddForce(transform.TransformDirection(Vector3.back) * _knockdownScaleWidth + Vector3.up * _knockdownScaleHeight, ForceMode.Impulse);
+        _canHit = false;
+        Die();
+    }
 }
