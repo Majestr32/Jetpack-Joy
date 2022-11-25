@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -11,9 +12,9 @@ public class MapGenerator : MonoBehaviour
     public static MapGenerator Instance { get; private set; }
 
     [SerializeField]
-    private GameObject _grassPf;
+    private List<PoolObject> _poolPrefabs;
     private List<GameObject> _pool;
-    private int _grassPoolCount = 5;
+    private int _poolCount = 5;
     private int _zFirstFragmentOffset = 8;
     private int _zFragments = 5;
     private int _zSpawnGap = 14;
@@ -37,11 +38,14 @@ public class MapGenerator : MonoBehaviour
     {
         _pool = new List<GameObject>();
         GameObject grassObj;
-        for(int i = 0; i < _grassPoolCount; i++)
+        for(int j = 0; j < _poolPrefabs.Count; j++)
         {
-            grassObj = Instantiate(_grassPf);
-            grassObj.SetActive(false);
-            _pool.Add(grassObj);
+            for (int i = 0; i < _poolCount; i++)
+            {
+                grassObj = Instantiate(_poolPrefabs[j].gameObject);
+                grassObj.SetActive(false);
+                _pool.Add(grassObj);
+            }
         }
     }
 
@@ -58,9 +62,11 @@ public class MapGenerator : MonoBehaviour
 
     GameObject GetPooledObject()
     {
-        for(int i = 0; i < _grassPoolCount; i++)
+        int objTypeToChoose = Random.Range(0, _poolPrefabs.Count);
+        string poolTagToChoose = _poolPrefabs[objTypeToChoose].poolTag;
+        for(int i = 0; i < _pool.Count; i++)
         {
-            if (!_pool[i].activeInHierarchy)
+            if (!_pool[i].activeInHierarchy && _pool[i].GetComponent<PoolObject>().poolTag == poolTagToChoose)
             {
                 return _pool[i];
             }
