@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneManagment : MonoBehaviour
 {
+    bool _isPreviousSceneNightMode = false;
     public static SceneManagment Instance { get; private set; }
     private void Awake()
     {
@@ -14,7 +15,6 @@ public class SceneManagment : MonoBehaviour
         {
             Instance = this;
         }
-        DontDestroyOnLoad(gameObject);
     }
 
     public void GoToMenu()
@@ -26,12 +26,26 @@ public class SceneManagment : MonoBehaviour
     {
         SceneManager.LoadScene(sceneName: "Game over");
     }
+    public void RestartGame()
+    {
+        if (_isPreviousSceneNightMode)
+        {
+            GoToNightMode();
+        }
+        else
+        {
+            GoToGameMode();
+        }
+    }
     public void GoToGameMode()
     {
+        Debug.Log("Clicked game");
+        _isPreviousSceneNightMode = false;
         SceneManager.LoadScene(sceneName: "Game");
     }
     public void GoToNightMode()
     {
+        _isPreviousSceneNightMode = true;
         SceneManager.LoadScene(sceneName: "Game DARK");
     }
 

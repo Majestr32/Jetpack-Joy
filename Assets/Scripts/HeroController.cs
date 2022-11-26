@@ -47,9 +47,9 @@ public class HeroController : MonoBehaviour
         }
     }
 
-    private void LoseHp()
+    public void LoseHp(bool allHp = false)
     {
-        if(_hp == 1)
+        if(allHp || _hp == 1)
         {
             SceneManagment.Instance.GoToGameOver();
         }

@@ -2,15 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Coin : MonoBehaviour
+public class Water : MonoBehaviour
 {
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            GameManager.Instance.pickCoin();
-            Destroy(gameObject);
+            other.GetComponent<HeroController>().LoseHp(allHp: true);
         }
     }
 }

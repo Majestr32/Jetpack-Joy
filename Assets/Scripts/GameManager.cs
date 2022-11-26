@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI _textMesh;
     public static GameManager Instance { get; private set; }
 
-
     private int _coinsCount;
     public int coinsCount { get => _coinsCount; }
 
